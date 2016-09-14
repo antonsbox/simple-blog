@@ -44,4 +44,3 @@ In the case where it doesn't work, the first thing to try is looking at the deve
 - `tslint.json` - `tslint` is a program and helps enforce rules about code style. The `tslint.json` is the config file that specifies conventions for this project.
 - `vendor` - for this project we're using [Semantic-UI](http://semantic-ui.com/) for the CSS. We've included the CSS files from Semantic here.
 - `resources` - this is where we store a few images
-"# angular2-reddit-base" 
