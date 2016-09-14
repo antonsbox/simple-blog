@@ -1,6 +1,6 @@
-# angular2-skeleton
+# simple-blog
 
-> angular2-skeleton Angular 2.
+> simple-blog on Angular 2.
 
 ## Dependencies
 
