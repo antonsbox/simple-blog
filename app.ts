@@ -1,5 +1,5 @@
 import  {bootstrap} from "@angular/platform-browser-dynamic";
-import  {Component, Input} from"@angular/core";
+import  {Component, Input, EventEmitter, Output} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 
 @Component({
@@ -7,7 +7,9 @@ import  {FORM_DIRECTIVES} from  "@angular/common";
     template: `
                    <td>
                     <div class="ui checkbox">
-                        <input  #checkblog type="checkbox" value="{{row.id}}" (change)="selectPost(checkblog.checked,checkblog.value)"><label></label>
+                        <input  #checkblog type="checkbox" value="{{row.id}}" 
+                            (change)="selectPost(checkblog.checked,checkblog.value)">
+                            <label></label>
                     </div>               
                    </td>
                    <td>{{row.title}}</td>
@@ -18,7 +20,23 @@ import  {FORM_DIRECTIVES} from  "@angular/common";
 `
 })
 class PostRow {
+    @Output() notify: EventEmitter<string> = new EventEmitter<string>();
     @Input('myTr') row;
+    selected: boolean = false;
+    takenPosts: string[] = [];
+
+    selectPost(selected: boolean, value: string) {
+        this.notify.emit('Click from nested component');
+        this.selected = selected;
+        this.takenPosts.push(value);
+        this.takenPosts.forEach((tp)=> {
+            console.log(`POSTS TO DELETE ${tp}`)
+        })
+
+        console.log(`selectPost ${this.selected}, Id ${value}`);
+        return false;
+    }
+
 }
 
 @Component({
@@ -116,12 +134,12 @@ class SimpleBlogPost {
                  <thead>
                    <tr>
                     <th></th>
-                    <th>Title*</th>
+                    <th>Title</th>
                     <th>Created at</th>
                     <th>Action</th>
                     </tr>     
                  </thead>
-                     <tr *ngFor="let post of posts" [myTr]="post"></tr>
+                     <tr (notify)="onNotify($event)" *ngFor="let post of posts" [myTr]="post" ></tr>
                     </table>
          </div>
         <div *ngIf="newPostPressed">
@@ -135,7 +153,7 @@ class SimpleBlogPost {
                 </div>                
                 <form #editForm="ngForm" class="ui form" >
                     <div ngControlGroup="name" #name="ngForm">
-                             <label><h3>Title</h3></label><input ngControl="title" #first="ngForm">       
+                             <label><h3>Title*</h3></label><input ngControl="title" #first="ngForm">       
                     </div>
                 </form>
                 <h3>Description*</h3>
@@ -145,6 +163,7 @@ class SimpleBlogPost {
                  </div>
                 <CKEDITOR></CKEDITOR>
                 {{editForm.value | json }} {{first.value}}
+                
                  
             </div>
         </div>
@@ -192,6 +211,10 @@ class SimpleBlogApp {
     resetPost() {
         console.log(`resetPost pressed`);
         return false;
+    }
+
+    onNotify(message: string): void {
+        alert(message);
     }
 
     savePost(title: HTMLInputElement) {
