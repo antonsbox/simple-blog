@@ -2,13 +2,23 @@ import  {bootstrap} from "@angular/platform-browser-dynamic";
 import  {Component, Input, EventEmitter, Output} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 
+
+class Message {
+    id: number;
+    checked: boolean;
+
+    constructor(id: number, checked: boolean) {
+        this.id = id;
+        this.checked = checked;
+    }
+}
 @Component({
     selector: '[myTr]',
     template: `
                    <td>
                     <div class="ui checkbox">
                         <input  #checkblog type="checkbox" value="{{row.id}}" 
-                            (change)="selectPost(checkblog.checked,checkblog.value)">
+                            (change)="selectPost(checkblog.value,checkblog.checked)">
                             <label></label>
                     </div>               
                    </td>
@@ -20,20 +30,18 @@ import  {FORM_DIRECTIVES} from  "@angular/common";
 `
 })
 class PostRow {
-    @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+    @Output() select: EventEmitter<Message> = new EventEmitter<Message>();
     @Input('myTr') row;
-    selected: boolean = false;
-    takenPosts: string[] = [];
 
-    selectPost(selected: boolean, value: string) {
-        this.notify.emit('Click from nested component');
-        this.selected = selected;
-        this.takenPosts.push(value);
-        this.takenPosts.forEach((tp)=> {
-            console.log(`POSTS TO DELETE ${tp}`)
-        })
 
-        console.log(`selectPost ${this.selected}, Id ${value}`);
+    selectPost(value: number, checked: boolean) {
+        var msg = new Message(value, checked);
+        this.select.emit(msg);
+        // this.takenPosts.forEach((tp)=> { //TODO
+        //     console.log(`POSTS TO DELETE ${tp}`)
+        // })
+
+        // console.log(`selectPost ${this.selected}, Id ${value}`);
         return false;
     }
 
@@ -139,7 +147,7 @@ class SimpleBlogPost {
                     <th>Action</th>
                     </tr>     
                  </thead>
-                     <tr (notify)="onNotify($event)" *ngFor="let post of posts" [myTr]="post" ></tr>
+                     <tr (select)="onSelect($event)" *ngFor="let post of posts" [myTr]="post" ></tr>
                     </table>
          </div>
         <div *ngIf="newPostPressed">
@@ -162,7 +170,7 @@ class SimpleBlogPost {
                      <p></p>
                  </div>
                 <CKEDITOR></CKEDITOR>
-                {{editForm.value | json }} {{first.value}}
+                {{editForm.value | json }} {{first.value}} //TODO 
                 
                  
             </div>
@@ -177,6 +185,7 @@ class SimpleBlogApp {
     newPostPressed: boolean = false;
     posts: SimpleBlogPost[];
     valueRequire: boolean = false;
+    selectedPosts: Message[] = [];
 
     constructor() {
         this.posts = [];
@@ -198,6 +207,12 @@ class SimpleBlogApp {
     }
 
     deletePost() {
+        this.selectedPosts.forEach((sp)=> {
+            console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`)
+            console.log(`INDEX ${this.selectedPosts.indexOf(sp)}`);
+        })
+        this.selectedPosts.splice(0,this.selectedPosts.length);
+
         console.log(`deletePost pressed`);
         return false;
     }
@@ -213,8 +228,9 @@ class SimpleBlogApp {
         return false;
     }
 
-    onNotify(message: string): void {
-        alert(message);
+    onSelect(message: Message): void {
+        this.selected = message.checked;
+        this.selectedPosts.push(message);
     }
 
     savePost(title: HTMLInputElement) {
