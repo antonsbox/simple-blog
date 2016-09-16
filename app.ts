@@ -21,25 +21,37 @@ class CKEDITOR {
     }
 
     ngOnInit() {
-        CKEDITOR.editor = window['CKEDITOR']['replace'](targetId);
+        CKEDITOR.editor = window['CKEDITOR']['replace']('targetId');
     }
 
 
 }
 
-@Component({
-    selector: 'simple-blog-edit',
-    template: `
-`
-})
-class SimpleBlogEdit {
+
+class SimpleBlogPost {
+    id: number;
+    title: string;
+    content: string;
+    creationTime: Date;
+
+    constructor(title: string, content: string) {
+        this.title = title;
+        this.content = content;
+        this.id = this.getRandomInt(1,10000); //TODO need getLastId from array
+        this.creationTime = new Date();
+    }
+
+    getRandomInt(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
 
 }
 
 
 @Component({
     selector: 'simple-blog',
-    directives: [SimpleBlogEdit, FORM_DIRECTIVES, CKEDITOR],
+    directives: [FORM_DIRECTIVES, CKEDITOR],
     template: `
     <div class="ui raised text container segment">
         <div *ngIf="!newPostPressed">
@@ -79,7 +91,7 @@ class SimpleBlogEdit {
             <div class="ui container">
                 <div class=" ui clearing segment">
                     <h1 class="ui header">Simple Blog - Edit
-                        <button (click)="savePost()" class="ui right floated primary button">Save</button>
+                        <button (click)="savePost(first)" class="ui right floated primary button">Save</button>
                         <button (click)="deletePost()" class="ui right floated primary button">Delete</button>
                         <button  (click)="resetPost()" class="ui right floated primary button">Reset</button>
                     </h1>
@@ -91,17 +103,21 @@ class SimpleBlogEdit {
                 </form>
                 <h3>Description</h3>
                 <CKEDITOR></CKEDITOR>
-                {{editForm.value | json }}
+                {{editForm.value | json }} {{first.value}}
             </div>
         </div>
 </div>
 
 `
 })
-class SimpleBlog {
+class SimpleBlogApp {
     selected: boolean = false;
     newPostPressed: boolean = false;
-    ckeditorContent: string;
+    posts: SimpleBlogPost[];
+
+    constructor() {
+        this.posts = [];
+    }
 
     editPost() {
         console.log(`editPost pressed`);
@@ -130,11 +146,16 @@ class SimpleBlog {
         return false;
     }
 
-    savePost() {
+    savePost(title: HTMLInputElement) {
         var data = CKEDITOR.editor.getData();
-        console.log(`Data ${data}`);
+        this.newPostPressed = false;
+        this.posts.push(new SimpleBlogPost(title.value, data));
+        this.posts.forEach((i)=> {
+            console.log(`ID ${i.id} Title ${i.title}, Content ${i.content}, ${i.creationTime}`)
+        });
+        // console.log(`Data ${data}`);
         return false;
     }
 }
 
-bootstrap(SimpleBlog);
+bootstrap(SimpleBlogApp);
