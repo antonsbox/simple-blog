@@ -2,6 +2,24 @@ import  {bootstrap} from "@angular/platform-browser-dynamic";
 import  {Component, Input} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 
+@Component({
+    selector: '[myTr]',
+    template: `
+                   <td>
+                    <div class="ui checkbox">
+                        <input  #checkblog type="checkbox" value="{{row.id}}" (change)="selectPost(checkblog.checked,checkblog.value)"><label></label>
+                    </div>               
+                   </td>
+                   <td>{{row.title}}</td>
+                   <td>{{row.creationTime}}</td>
+                   <td><a href (click)="editPost()">Edit</a>
+                   </td>
+                    
+`
+})
+class PostRow {
+    @Input('myTr') row;
+}
 
 @Component({
     selector: 'CKEDITOR',
@@ -26,23 +44,54 @@ class CKEDITOR {
 
 
 }
-
-
 class SimpleBlogPost {
     id: number;
     title: string;
     content: string;
-    creationTime: Date;
+    creationTime: string;
 
     constructor(title: string, content: string) {
         this.title = title;
         this.content = content;
-        this.id = this.getRandomInt(1,10000); //TODO need getLastId from array
-        this.creationTime = new Date();
+        this.id = this.getRandomInt(1, 10000); //TODO need getLastId from array
+        this.creationTime = this.formatDate(new Date());
     }
 
     getRandomInt(min: number, max: number) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    formatDate(date: Date) {
+
+        var dd: number = date.getDate();
+        var DD: string = date.getDate().toString();
+        if (dd < 10) DD = '0' + dd;
+
+        var mm: number = date.getMonth() + 1;
+        var MM: string = date.getMonth().toString();
+        if (mm < 10) MM = '0' + mm;
+
+        var yy: number = date.getFullYear() % 100;
+        var YY: string = date.getFullYear().toString();
+        if (yy < 10) YY = '0' + yy;
+
+        var hh: number = date.getHours();
+        var HH: string = date.getHours().toString();
+        if (hh < 10) HH = '0' + hh;
+
+        var mn: number = date.getMinutes();
+        var MN: string = date.getMinutes().toString();
+        if (mn < 10) MN = '0' + mn;
+
+        var ss: number = date.getSeconds();
+        var SS: string = date.getSeconds().toString();
+        if (ss < 10) SS = '0' + ss;
+
+        var ms: number = date.getMilliseconds();
+        var MS: string = date.getMilliseconds().toString();
+        if (ms < 10) MS = '0' + ms;
+
+        return DD + '.' + MM + '.' + YY + '-' + HH + '.' + MN + "." + SS + '.' + MS;
     }
 
 
@@ -51,9 +100,9 @@ class SimpleBlogPost {
 
 @Component({
     selector: 'simple-blog',
-    directives: [FORM_DIRECTIVES, CKEDITOR],
+    directives: [FORM_DIRECTIVES, CKEDITOR, PostRow],
     template: `
-    <div class="ui raised text container segment">
+    <div class="ui container segment">
         <div *ngIf="!newPostPressed">
             <div class="ui container">
                 <div class=" ui clearing segment">
@@ -63,29 +112,17 @@ class SimpleBlogPost {
                     </h1>
                 </div>
             </div>
-            <table class="ui striped selectable celled table">
-                <thead>
-                    <tr>
+             <table class="ui striped selectable celled table">
+                 <thead>
+                   <tr>
                     <th></th>
-                    <th>Title</th>
+                    <th>Title*</th>
                     <th>Created at</th>
                     <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <td>
-                    <div class="ui checkbox">
-                        <input  #checkblog type="checkbox" value="chbxid1" (change)="selectPost(checkblog.checked,checkblog.value)"><label></label>
-                    </div>               
-                    </td>
-                    <td>Approved</td>
-                    <td>Requires call</td>
-                    <td><a href (click)="editPost()">Edit</a>
-                    </td>
-                    </tr>
-                </tbody>
-            </table>
+                    </tr>     
+                 </thead>
+                     <tr *ngFor="let post of posts" [myTr]="post"></tr>
+                    </table>
          </div>
         <div *ngIf="newPostPressed">
             <div class="ui container">
@@ -101,11 +138,17 @@ class SimpleBlogPost {
                              <label><h3>Title</h3></label><input ngControl="title" #first="ngForm">       
                     </div>
                 </form>
-                <h3>Description</h3>
+                <h3>Description*</h3>
+                <div *ngIf="valueRequire">
+                     <h3>Please, fill the required fields </h3> 
+                     <p></p>
+                 </div>
                 <CKEDITOR></CKEDITOR>
                 {{editForm.value | json }} {{first.value}}
+                 
             </div>
         </div>
+
 </div>
 
 `
@@ -114,9 +157,14 @@ class SimpleBlogApp {
     selected: boolean = false;
     newPostPressed: boolean = false;
     posts: SimpleBlogPost[];
+    valueRequire: boolean = false;
 
     constructor() {
         this.posts = [];
+    }
+
+    ngOnInit() {
+        this.posts.push(new SimpleBlogPost('test', 'test data'));
     }
 
     editPost() {
@@ -148,14 +196,21 @@ class SimpleBlogApp {
 
     savePost(title: HTMLInputElement) {
         var data = CKEDITOR.editor.getData();
-        this.newPostPressed = false;
-        this.posts.push(new SimpleBlogPost(title.value, data));
-        this.posts.forEach((i)=> {
-            console.log(`ID ${i.id} Title ${i.title}, Content ${i.content}, ${i.creationTime}`)
-        });
-        // console.log(`Data ${data}`);
+        if ((data.length > 0) && !(title.value == null)) {
+            this.valueRequire = false;
+            this.newPostPressed = false;
+            console.log(`${title.value}`);
+
+            this.posts.push(new SimpleBlogPost(title.value, data));
+            this.posts.forEach((i)=> {
+                console.log(`ID ${i.id} Title ${i.title}, Content ${i.content}, ${i.creationTime}`)
+            });
+        } else {
+            this.valueRequire = true;
+        }
         return false;
     }
+
 }
 
 bootstrap(SimpleBlogApp);
