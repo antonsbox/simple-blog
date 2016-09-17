@@ -171,7 +171,7 @@ class SimpleBlogApp {
 
 
     onSelect(message: Message): void {
-        this.selected = message.checked;
+        // this.selected = message.checked;
         var isNotExist: boolean = true;
         if (this.selectedPosts.length == 0) {
             console.log('size 0 Push');
@@ -202,6 +202,12 @@ class SimpleBlogApp {
         console.log(`SIZE ${this.selectedPosts.length}`);
         this.selectedPosts.forEach(function (i) {
             console.log(`ID ${i.id} Title ${i.checked}`);
+        });
+        this.selected = this.selectedPosts.some((i)=> {
+            if (i.checked == true)
+                return true;
+            else
+                return false;
         });
     }
 
