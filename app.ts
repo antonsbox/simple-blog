@@ -128,7 +128,10 @@ class SimpleBlogApp {
     }
 
     ngOnInit() {
-        this.posts.push(new SimpleBlogPost('test', 'test data'));
+        var i: number;
+        for (i = 0; i <= 15; i++) {
+            this.posts.push(new SimpleBlogPost('test' + i.toString(), 'test data' + i.toString()));
+        }
     }
 
     editPost() {
@@ -166,7 +169,6 @@ class SimpleBlogApp {
         return false;
     }
 
-    
 
     onSelect(message: Message): void {
         this.selected = message.checked;

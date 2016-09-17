@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53350c51-7ae2-4028-9cbd-09c3f07b8a85" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.ts" afterPath="$PROJECT_DIR$/app.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/blog-tr.html" afterPath="$PROJECT_DIR$/components/blog-tr.html" />
     </list>
     <ignored path="angular2-reddit-base.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,14 +38,14 @@
       <file leaf-file-name="app.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-308">
-              <caret line="168" column="4" selection-start-line="168" selection-start-column="4" selection-end-line="168" selection-end-column="4" />
+            <state relative-caret-position="418">
+              <caret line="131" column="27" selection-start-line="131" selection-start-column="27" selection-end-line="131" selection-end-column="27" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
                 <element signature="e#913#1071#0" expanded="false" />
                 <element signature="n#CKEDITOR#0" expanded="false" />
                 <element signature="n#!!block;n#formatDate#0;n#SimpleBlogPost#0" expanded="false" />
-                <marker date="1474116614639" expanded="true" signature="1026:1064" ph="..." />
+                <marker date="1474116972007" expanded="true" signature="1026:1064" ph="..." />
               </folding>
             </state>
           </provider>
@@ -369,7 +367,7 @@
       <workItem from="1473863981716" duration="7679000" />
       <workItem from="1473926910125" duration="31169000" />
       <workItem from="1474019566342" duration="27159000" />
-      <workItem from="1474103073044" duration="11655000" />
+      <workItem from="1474103073044" duration="12266000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1473765624302</created>
@@ -396,7 +394,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="107871000" />
+    <option name="totallyTimeSpent" value="108482000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -408,7 +406,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
+    <frame x="-8" y="-8" width="1296" height="1000" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936978" sideWeight="0.49523053" order="7" side_tool="false" content_ui="tabs" />
@@ -781,14 +779,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-308">
-          <caret line="168" column="4" selection-start-line="168" selection-start-column="4" selection-end-line="168" selection-end-column="4" />
+        <state relative-caret-position="418">
+          <caret line="131" column="27" selection-start-line="131" selection-start-column="27" selection-end-line="131" selection-end-column="27" />
           <folding>
             <element signature="e#0#61#0" expanded="true" />
             <element signature="e#913#1071#0" expanded="false" />
             <element signature="n#CKEDITOR#0" expanded="false" />
             <element signature="n#!!block;n#formatDate#0;n#SimpleBlogPost#0" expanded="false" />
-            <marker date="1474116614639" expanded="true" signature="1026:1064" ph="..." />
+            <marker date="1474116972007" expanded="true" signature="1026:1064" ph="..." />
           </folding>
         </state>
       </provider>
