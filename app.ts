@@ -147,7 +147,7 @@ class SimpleBlogApp {
             console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`)
             console.log(`INDEX ${this.selectedPosts.indexOf(sp)}`);
         })
-        this.selectedPosts.splice(0,this.selectedPosts.length);
+        this.selectedPosts.splice(0, this.selectedPosts.length);
 
         console.log(`deletePost pressed`);
         return false;
@@ -184,6 +184,11 @@ class SimpleBlogApp {
             this.valueRequire = true;
         }
         return false;
+    }
+
+    backToList() {
+        this.valueRequire = false;
+        this.newPostPressed = false;
     }
 
 }
