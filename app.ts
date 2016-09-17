@@ -13,25 +13,12 @@ class Message {
     }
 }
 @Component({
-    selector: '[myTr]',
-    template: `
-                   <td>
-                    <div class="ui checkbox">
-                        <input  #checkblog type="checkbox" value="{{row.id}}" 
-                            (change)="selectPost(checkblog.value,checkblog.checked)">
-                            <label></label>
-                    </div>               
-                   </td>
-                   <td>{{row.title}}</td>
-                   <td>{{row.creationTime}}</td>
-                   <td><a href (click)="editPost()">Edit</a>
-                   </td>
-                    
-`
+    selector: '[blog-tr]',
+    templateUrl: 'components/blog-tr.html'
 })
 class PostRow {
     @Output() select: EventEmitter<Message> = new EventEmitter<Message>();
-    @Input('myTr') row;
+    @Input('blog-tr') row;
 
 
     selectPost(value: number, checked: boolean) {
@@ -127,58 +114,7 @@ class SimpleBlogPost {
 @Component({
     selector: 'simple-blog',
     directives: [FORM_DIRECTIVES, CKEDITOR, PostRow],
-    template: `
-    <div class="ui container segment">
-        <div *ngIf="!newPostPressed">
-            <div class="ui container">
-                <div class=" ui clearing segment">
-                    <h1 class="ui header">Simple Blog
-                        <div *ngIf="selected"><button (click)="deletePost()" class="ui right floated primary button">Delete</button></div>
-                        <button  (click)="newPost(true)" class="ui right floated primary button">Add New Post</button>
-                    </h1>
-                </div>
-            </div>
-             <table class="ui striped selectable celled table">
-                 <thead>
-                   <tr>
-                    <th></th>
-                    <th>Title</th>
-                    <th>Created at</th>
-                    <th>Action</th>
-                    </tr>     
-                 </thead>
-                     <tr (select)="onSelect($event)" *ngFor="let post of posts" [myTr]="post" ></tr>
-                    </table>
-         </div>
-        <div *ngIf="newPostPressed">
-            <div class="ui container">
-                <div class=" ui clearing segment">
-                    <h1 class="ui header">Simple Blog - Edit
-                        <button (click)="savePost(first)" class="ui right floated primary button">Save</button>
-                        <button (click)="deletePost()" class="ui right floated primary button">Delete</button>
-                        <button  (click)="resetPost()" class="ui right floated primary button">Reset</button>
-                    </h1>
-                </div>                
-                <form #editForm="ngForm" class="ui form" >
-                    <div ngControlGroup="name" #name="ngForm">
-                             <label><h3>Title*</h3></label><input ngControl="title" #first="ngForm">       
-                    </div>
-                </form>
-                <h3>Description*</h3>
-                <div *ngIf="valueRequire">
-                     <h3>Please, fill the required fields </h3> 
-                     <p></p>
-                 </div>
-                <CKEDITOR></CKEDITOR>
-                {{editForm.value | json }} {{first.value}} //TODO 
-                
-                 
-            </div>
-        </div>
-
-</div>
-
-`
+    templateUrl: './components/simple-blog.html'
 })
 class SimpleBlogApp {
     selected: boolean = false;
