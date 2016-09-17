@@ -39,14 +39,15 @@
       <file leaf-file-name="app.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="210" column="11" selection-start-line="210" selection-start-column="11" selection-end-line="210" selection-end-column="11" />
+            <state relative-caret-position="462">
+              <caret line="154" column="65" selection-start-line="154" selection-start-column="65" selection-end-line="154" selection-end-column="65" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
-                <element signature="e#913#1071#0" expanded="false" />
+                <element signature="e#727#885#0" expanded="false" />
                 <element signature="n#CKEDITOR#0" expanded="false" />
+                <element signature="n#!!block;n#getRandomInt#0;n#SimpleBlogPost#0" expanded="false" />
                 <element signature="n#!!block;n#formatDate#0;n#SimpleBlogPost#0" expanded="false" />
-                <marker date="1474118773604" expanded="true" signature="1026:1064" ph="..." />
+                <marker date="1474136026484" expanded="true" signature="840:878" ph="..." />
               </folding>
             </state>
           </provider>
@@ -368,7 +369,7 @@
       <workItem from="1473863981716" duration="7679000" />
       <workItem from="1473926910125" duration="31169000" />
       <workItem from="1474019566342" duration="27159000" />
-      <workItem from="1474103073044" duration="12962000" />
+      <workItem from="1474103073044" duration="16146000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1473765624302</created>
@@ -395,7 +396,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109178000" />
+    <option name="totallyTimeSpent" value="112362000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -746,14 +747,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/components/simple-blog.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="29" column="44" selection-start-line="29" selection-start-column="44" selection-end-line="29" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="44">
@@ -778,16 +771,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/components/simple-blog.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="316">
+          <caret line="29" column="44" selection-start-line="29" selection-start-column="44" selection-end-line="29" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="210" column="11" selection-start-line="210" selection-start-column="11" selection-end-line="210" selection-end-column="11" />
+        <state relative-caret-position="462">
+          <caret line="154" column="65" selection-start-line="154" selection-start-column="65" selection-end-line="154" selection-end-column="65" />
           <folding>
             <element signature="e#0#61#0" expanded="true" />
-            <element signature="e#913#1071#0" expanded="false" />
+            <element signature="e#727#885#0" expanded="false" />
             <element signature="n#CKEDITOR#0" expanded="false" />
+            <element signature="n#!!block;n#getRandomInt#0;n#SimpleBlogPost#0" expanded="false" />
             <element signature="n#!!block;n#formatDate#0;n#SimpleBlogPost#0" expanded="false" />
-            <marker date="1474118773604" expanded="true" signature="1026:1064" ph="..." />
+            <marker date="1474136026484" expanded="true" signature="840:878" ph="..." />
           </folding>
         </state>
       </provider>

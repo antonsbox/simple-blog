@@ -24,11 +24,6 @@ class PostRow {
     selectPost(value: number, checked: boolean) {
         var msg = new Message(value, checked);
         this.select.emit(msg);
-        // this.takenPosts.forEach((tp)=> { //TODO
-        //     console.log(`POSTS TO DELETE ${tp}`)
-        // })
-
-        // console.log(`selectPost ${this.selected}, Id ${value}`);
         return false;
     }
 
@@ -145,16 +140,35 @@ class SimpleBlogApp {
     }
 
     deletePost() {
+        var index: number;
         this.selectedPosts.forEach((sp)=> {
             console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`)
             console.log(`INDEX ${this.selectedPosts.indexOf(sp)}`);
+            if (sp.checked == true) {
+                console.log(`${sp.id}`);
+                this.posts.forEach((p)=> {
+                    if (sp.id == p.id) {
+                        console.log(`${p.id}`);
+                        index = this.posts.indexOf(p);
+                        console.log(`${index}`);
+                        this.posts.splice(index, index);
+                        if(index==0) this.posts.splice(index, 1);
+                    }
+                });
+            }
         });
         this.selectedPosts.splice(0, this.selectedPosts.length);
+        //
+        // console.log(`deletePost pressed`);
+        // this.selectedPosts.forEach(function (i) {
+        //     console.log(`ID ${i.id} Title ${i.checked}`);
+        // });
 
-        console.log(`deletePost pressed`);
-        this.selectedPosts.forEach(function (i) {
-            console.log(`ID ${i.id} Title ${i.checked}`);
+        this.posts.forEach(function (p) {
+            console.log(`ID ${p.id} Title ${p.title}`);
         });
+        console.log(`${this.posts.length}`);
+
         return false;
     }
 
@@ -174,34 +188,34 @@ class SimpleBlogApp {
         // this.selected = message.checked;
         var isNotExist: boolean = true;
         if (this.selectedPosts.length == 0) {
-            console.log('size 0 Push');
+            // console.log('size 0 Push');
             this.selectedPosts.push(message);
         }
         else {
             isNotExist = this.selectedPosts.some((i)=> {
                 if (message.id == i.id) {
-                    console.log(`true`);
-                    console.log(`ID MESS ${message.id}`);
-                    console.log(`id MESS ${i.id}`);
+                    // console.log(`true`);
+                    // console.log(`ID MESS ${message.id}`);
+                    // console.log(`id MESS ${i.id}`);
                     i.checked = message.checked;
                     return true;
                 } else {
-                    console.log(`true`);
-                    console.log(`ID MESS ${message.id}`);
-                    console.log(`id MESS ${i.id}`);
+                    // console.log(`true`);
+                    // console.log(`ID MESS ${message.id}`);
+                    // console.log(`id MESS ${i.id}`);
                     return false;
                 }
             });
 
             if (!isNotExist) {
-                console.log('isNewPush');
+                // console.log('isNewPush');
                 this.selectedPosts.push(message);
                 isNotExist = true;
             }
         }
-        console.log(`SIZE ${this.selectedPosts.length}`);
+        // console.log(`SIZE ${this.selectedPosts.length}`);
         this.selectedPosts.forEach(function (i) {
-            console.log(`ID ${i.id} Title ${i.checked}`);
+            // console.log(`ID ${i.id} Title ${i.checked}`);
         });
         this.selected = this.selectedPosts.some((i)=> {
             if (i.checked == true)
