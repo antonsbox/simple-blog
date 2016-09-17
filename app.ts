@@ -138,7 +138,6 @@ class SimpleBlogApp {
 
     newPost(newPostPressed: boolean) {
         this.newPostPressed = newPostPressed;
-        console.log(`newPost pressed value ${this.newPostPressed}`);
         return false;
     }
 
@@ -146,10 +145,13 @@ class SimpleBlogApp {
         this.selectedPosts.forEach((sp)=> {
             console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`)
             console.log(`INDEX ${this.selectedPosts.indexOf(sp)}`);
-        })
+        });
         this.selectedPosts.splice(0, this.selectedPosts.length);
 
         console.log(`deletePost pressed`);
+        this.selectedPosts.forEach(function (i) {
+            console.log(`ID ${i.id} Title ${i.checked}`);
+        });
         return false;
     }
 
@@ -164,9 +166,41 @@ class SimpleBlogApp {
         return false;
     }
 
+    
+
     onSelect(message: Message): void {
         this.selected = message.checked;
-        this.selectedPosts.push(message);
+        var isNotExist: boolean = true;
+        if (this.selectedPosts.length == 0) {
+            console.log('size 0 Push');
+            this.selectedPosts.push(message);
+        }
+        else {
+            isNotExist = this.selectedPosts.some((i)=> {
+                if (message.id == i.id) {
+                    console.log(`true`);
+                    console.log(`ID MESS ${message.id}`);
+                    console.log(`id MESS ${i.id}`);
+                    i.checked = message.checked;
+                    return true;
+                } else {
+                    console.log(`true`);
+                    console.log(`ID MESS ${message.id}`);
+                    console.log(`id MESS ${i.id}`);
+                    return false;
+                }
+            });
+
+            if (!isNotExist) {
+                console.log('isNewPush');
+                this.selectedPosts.push(message);
+                isNotExist = true;
+            }
+        }
+        console.log(`SIZE ${this.selectedPosts.length}`);
+        this.selectedPosts.forEach(function (i) {
+            console.log(`ID ${i.id} Title ${i.checked}`);
+        });
     }
 
     savePost(title: HTMLInputElement) {
