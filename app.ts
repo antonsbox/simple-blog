@@ -27,6 +27,10 @@ class PostRow {
         return false;
     }
 
+    editPost() {
+        console.log('edit pressed')
+    }
+
 }
 
 @Component({
@@ -142,7 +146,7 @@ class SimpleBlogApp {
     deletePost() {
         var index: number;
         this.selectedPosts.forEach((sp)=> {
-            console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`)
+            console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`);
             console.log(`INDEX ${this.selectedPosts.indexOf(sp)}`);
             if (sp.checked == true) {
                 console.log(`${sp.id}`);
@@ -152,7 +156,7 @@ class SimpleBlogApp {
                         index = this.posts.indexOf(p);
                         console.log(`${index}`);
                         this.posts.splice(index, index);
-                        if(index==0) this.posts.splice(index, 1);
+                        if (index == 0) this.posts.splice(index, 1);
                     }
                 });
             }
