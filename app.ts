@@ -1,5 +1,5 @@
 import  {bootstrap} from "@angular/platform-browser-dynamic";
-import  {Component, Input, EventEmitter, Output, enableProdMode} from"@angular/core";
+import  {Component, Input, EventEmitter, Output, enableProdMode, ChangeDetectorRef} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 // enableProdMode();
 class Message {
@@ -132,6 +132,7 @@ class SimpleBlogApp {
     selectedId: number = -1;
     selectedIndex: number = -1;
     selectedTitle: string = '';
+    tmpTite: string = '';
     firstRun: boolean = true;
 
     constructor() {
@@ -143,6 +144,13 @@ class SimpleBlogApp {
         for (i = 0; i <= 3; i++) {
             this.posts.push(new SimpleBlogPost('test' + i.toString(), 'test data' + i.toString()));
         }
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.selectedTitle = this.tmpTite;
+            console.log(`VIEWINIT`);
+        }, 1);
     }
 
     public  editPostPress(editorReady: boolean) {
@@ -158,7 +166,11 @@ class SimpleBlogApp {
                 console.log(`true ${this.selectedIndex}`);
                 if (this.selectedIndex > -1) {
                     CKEDITOR.editor.setData(this.posts[this.selectedIndex].content);
-                    this.selectedTitle = this.posts[this.selectedIndex].title;
+                    this.tmpTite = this.posts[this.selectedIndex].title;
+                    setTimeout(() => {
+                        this.selectedTitle = this.tmpTite;
+                        console.log(`VIEWINIT`);
+                    }, 1);
                 }
             }
 
@@ -274,7 +286,7 @@ class SimpleBlogApp {
             this.valueRequire = false;
             this.newPostPressed = false;
             this.selectedIndex = -1;
-            this.selectedTitle = '';
+            // this.selectedTitle = '';
             console.log(`${title.value}`);
 
             this.posts.push(new SimpleBlogPost(title.value, data));
