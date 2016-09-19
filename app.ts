@@ -1,15 +1,14 @@
 import  {bootstrap} from "@angular/platform-browser-dynamic";
-import  {Component, Input, EventEmitter, Output} from"@angular/core";
+import  {Component, Input, EventEmitter, Output, enableProdMode} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
-
-
+// enableProdMode();
 class Message {
     id: number;
     checked: boolean;
 
-    constructor(id: number, checked: boolean) {
+    constructor(id: number, checked?: boolean) {
         this.id = id;
-        this.checked = checked;
+        this.checked = checked || false;
     }
 }
 @Component({
@@ -18,6 +17,7 @@ class Message {
 })
 class PostRow {
     @Output() select: EventEmitter<Message> = new EventEmitter<Message>();
+    @Output() edit: EventEmitter<Message> = new EventEmitter<Message>();
     @Input('blog-tr') row;
 
 
@@ -27,8 +27,10 @@ class PostRow {
         return false;
     }
 
-    editPost() {
-        console.log('edit pressed')
+    editPost(id: number) {
+        var msg = new Message((id));
+        console.log('edit pressed');
+        this.edit.emit(msg);
     }
 
 }
@@ -37,7 +39,6 @@ class PostRow {
     selector: 'CKEDITOR',
     template: `
      <textarea  name="targetId" id="targetId" rows="rows" cols="cols">
-         Type here..
      </textarea>
   `
 })
@@ -46,12 +47,19 @@ class CKEDITOR {
     @Input() targetId;
     @Input() rows = 10;  //you can also give default values here
     @Input() cols;
+    @Output() editorReady: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     constructor() {
     }
 
     ngOnInit() {
         CKEDITOR.editor = window['CKEDITOR']['replace']('targetId');
+
+    }
+
+    ngAfterViewInit() {
+        CKEDITOR.editor.setData('type text here...');
+        this.editorReady.emit(true);
     }
 
 
@@ -121,6 +129,10 @@ class SimpleBlogApp {
     posts: SimpleBlogPost[];
     valueRequire: boolean = false;
     selectedPosts: Message[] = [];
+    selectedId: number = -1;
+    selectedIndex: number = -1;
+    selectedTitle: string = '';
+    firstRun: boolean = true;
 
     constructor() {
         this.posts = [];
@@ -128,18 +140,45 @@ class SimpleBlogApp {
 
     ngOnInit() {
         var i: number;
-        for (i = 0; i <= 15; i++) {
+        for (i = 0; i <= 3; i++) {
             this.posts.push(new SimpleBlogPost('test' + i.toString(), 'test data' + i.toString()));
         }
     }
 
-    editPost() {
-        console.log(`editPost pressed`);
+    public  editPostPress(editorReady: boolean) {
+        if (editorReady == true) {
+            if (this.posts.some((i)=> {
+                    if (this.selectedId == i.id) {
+                        this.selectedIndex = this.posts.indexOf(i);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                })) {
+                console.log(`true ${this.selectedIndex}`);
+                if (this.selectedIndex > -1) {
+                    CKEDITOR.editor.setData(this.posts[this.selectedIndex].content);
+                    this.selectedTitle = this.posts[this.selectedIndex].title;
+                }
+            }
+
+        }
+
+        console.log(`editPostPress pressed ${editorReady}`);
+    }
+
+
+    editPost(message: Message) {
+        this.newPostPressed = true;
+        this.selectedId = message.id;
+        console.log(`this.newPostPressed  ${this.newPostPressed } `);
         return false;
     }
 
     newPost(newPostPressed: boolean) {
         this.newPostPressed = newPostPressed;
+        // if(!this.firstRun) CKEDITOR.editor.setData('Type text here...');
+        // this.firstRun=false;
         return false;
     }
 
@@ -234,6 +273,8 @@ class SimpleBlogApp {
         if ((data.length > 0) && !(title.value == null)) {
             this.valueRequire = false;
             this.newPostPressed = false;
+            this.selectedIndex = -1;
+            this.selectedTitle = '';
             console.log(`${title.value}`);
 
             this.posts.push(new SimpleBlogPost(title.value, data));

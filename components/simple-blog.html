@@ -3,8 +3,10 @@
         <div class="ui container">
             <div class=" ui clearing segment">
                 <h1 class="ui header">Simple Blog
-                    <div *ngIf="selected"><button (click)="deletePost()" class="ui right floated primary button">Delete</button></div>
-                    <button  (click)="newPost(true)" class="ui right floated primary button">Add New Post</button>
+                    <div *ngIf="selected">
+                        <button (click)="deletePost()" class="ui right floated primary button">Delete</button>
+                    </div>
+                    <button (click)="newPost(true)" class="ui right floated primary button">Add New Post</button>
                 </h1>
             </div>
         </div>
@@ -17,22 +19,23 @@
                 <th>Action</th>
             </tr>
             </thead>
-            <tr (select)="onSelect($event)" *ngFor="let post of posts" [blog-tr]="post" ></tr>
+            <tr (select)="onSelect($event)" (edit)="editPost($event)" *ngFor="let post of posts" [blog-tr]="post"></tr>
         </table>
     </div>
     <div *ngIf="newPostPressed">
         <div class="ui container">
             <div class=" ui clearing segment">
                 <h1 class="ui header">Simple Blog - Edit
-                    <button (click)="savePost(first)" class="ui right floated primary button">Save</button>
+                    <button (click)="savePost(title)" class="ui right floated primary button">Save</button>
                     <button (click)="deletePost()" class="ui right floated primary button">Delete</button>
                     <button (click)="resetPost()" class="ui right floated primary button">Reset</button>
                     <button (click)="backToList()" class="ui right floated primary button">Back</button>
                 </h1>
             </div>
-            <form #editForm="ngForm" class="ui form" >
+            <form #editForm="ngForm" class="ui form">
                 <div ngControlGroup="name" #name="ngForm">
-                    <label><h3>Title*</h3></label><input ngControl="title" #first="ngForm">
+                    <label><h3>Title*</h3></label><input ngControl="title" [(ngModel)]="title.value" type="text"  #title="ngForm">
+
                 </div>
             </form>
             <h3>Description*</h3>
@@ -40,8 +43,8 @@
                 <h3>Please, fill the required fields </h3>
                 <p></p>
             </div>
-            <CKEDITOR></CKEDITOR>
-            {{editForm.value | json }} {{first.value}} //TODO
+            <CKEDITOR (editorReady)="editPostPress($event)"></CKEDITOR>
+            {{editForm.value | json }} {{title.value}} //TODO
 
 
         </div>
