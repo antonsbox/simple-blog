@@ -1,5 +1,5 @@
 import  {bootstrap} from "@angular/platform-browser-dynamic";
-import  {Component, Input, EventEmitter, Output, enableProdMode, ChangeDetectorRef} from"@angular/core";
+import  {Component, Input, EventEmitter, Output, enableProdMode} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 // enableProdMode();
 class Message {
@@ -29,7 +29,6 @@ class PostRow {
 
     editPost(id: number) {
         var msg = new Message((id));
-        console.log('edit pressed');
         this.edit.emit(msg);
     }
 
@@ -45,7 +44,7 @@ class PostRow {
 class CKEDITOR {
     public static editor: any;
     @Input() targetId;
-    @Input() rows = 10;  //you can also give default values here
+    @Input() rows = 10;
     @Input() cols;
     @Output() editorReady: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -133,7 +132,8 @@ class SimpleBlogApp {
     selectedIndex: number = -1;
     selectedTitle: string = '';
     tmpTite: string = '';
-    firstRun: boolean = true;
+    isEditPost: boolean = false;
+    isNewPost: boolean = false;
 
     constructor() {
         this.posts = [];
@@ -149,7 +149,6 @@ class SimpleBlogApp {
     ngAfterViewInit() {
         setTimeout(() => {
             this.selectedTitle = this.tmpTite;
-            console.log(`VIEWINIT`);
         }, 1);
     }
 
@@ -163,114 +162,101 @@ class SimpleBlogApp {
                         return false;
                     }
                 })) {
-                console.log(`true ${this.selectedIndex}`);
                 if (this.selectedIndex > -1) {
                     CKEDITOR.editor.setData(this.posts[this.selectedIndex].content);
                     this.tmpTite = this.posts[this.selectedIndex].title;
                     setTimeout(() => {
                         this.selectedTitle = this.tmpTite;
-                        console.log(`VIEWINIT`);
                     }, 1);
                 }
             }
-
         }
-
-        console.log(`editPostPress pressed ${editorReady}`);
     }
 
 
     editPost(message: Message) {
         this.newPostPressed = true;
+        this.isEditPost = true;
         this.selectedId = message.id;
-        console.log(`this.newPostPressed  ${this.newPostPressed } `);
         return false;
     }
 
     newPost(newPostPressed: boolean) {
         this.newPostPressed = newPostPressed;
-        // if(!this.firstRun) CKEDITOR.editor.setData('Type text here...');
-        // this.firstRun=false;
+        this.isNewPost = true;
         return false;
     }
 
     deletePost() {
-        var index: number;
-        this.selectedPosts.forEach((sp)=> {
-            console.log(`POSTS TO DELETE ${sp.id} ${sp.checked}`);
-            console.log(`INDEX ${this.selectedPosts.indexOf(sp)}`);
-            if (sp.checked == true) {
-                console.log(`${sp.id}`);
-                this.posts.forEach((p)=> {
-                    if (sp.id == p.id) {
-                        console.log(`${p.id}`);
-                        index = this.posts.indexOf(p);
-                        console.log(`${index}`);
-                        this.posts.splice(index, index);
-                        if (index == 0) this.posts.splice(index, 1);
-                    }
-                });
+        if (!this.isEditPost) {
+            if (!this.isNewPost) {
+            } else {
+                this.backToList();
             }
-        });
-        this.selectedPosts.splice(0, this.selectedPosts.length);
-        //
-        // console.log(`deletePost pressed`);
-        // this.selectedPosts.forEach(function (i) {
-        //     console.log(`ID ${i.id} Title ${i.checked}`);
-        // });
+            var index: number;
+            this.selectedPosts.forEach((sp)=> {
+                if (sp.checked == true) {
+                    this.posts.forEach((p)=> {
+                        if (sp.id == p.id) {
+                            index = this.posts.indexOf(p);
+                            this.posts.splice(index, index);
+                            if (index == 0) this.posts.splice(index, 1);
+                        }
+                    });
+                }
+            });
+            this.selectedPosts.splice(0, this.selectedPosts.length);
+            this.posts.forEach(function (p) {
+            });
+        } else {
+            this.posts.splice(this.selectedIndex, 1);
+            this.valueRequire = false;
+            this.newPostPressed = false;
+            this.selectedIndex = -1;
+            this.selectedTitle = '';
+            this.isEditPost = false;
 
-        this.posts.forEach(function (p) {
-            console.log(`ID ${p.id} Title ${p.title}`);
-        });
-        console.log(`${this.posts.length}`);
-
+        }
         return false;
     }
 
     selectPost(selected: boolean, value: string) {
         this.selected = selected;
-        console.log(`selectPost ${this.selected}, Id ${value}`);
         return false;
     }
 
     resetPost() {
-        console.log(`resetPost pressed`);
+        if (this.isEditPost) {
+            this.editPostPress(true);
+        } else {
+            CKEDITOR.editor.setData('type text here..');
+            this.selectedTitle = '';
+        }
         return false;
     }
 
 
     onSelect(message: Message): void {
-        // this.selected = message.checked;
         var isNotExist: boolean = true;
         if (this.selectedPosts.length == 0) {
-            // console.log('size 0 Push');
             this.selectedPosts.push(message);
         }
         else {
             isNotExist = this.selectedPosts.some((i)=> {
                 if (message.id == i.id) {
-                    // console.log(`true`);
-                    // console.log(`ID MESS ${message.id}`);
-                    // console.log(`id MESS ${i.id}`);
                     i.checked = message.checked;
                     return true;
                 } else {
-                    // console.log(`true`);
-                    // console.log(`ID MESS ${message.id}`);
-                    // console.log(`id MESS ${i.id}`);
                     return false;
                 }
             });
 
             if (!isNotExist) {
-                // console.log('isNewPush');
                 this.selectedPosts.push(message);
                 isNotExist = true;
             }
         }
-        // console.log(`SIZE ${this.selectedPosts.length}`);
         this.selectedPosts.forEach(function (i) {
-            // console.log(`ID ${i.id} Title ${i.checked}`);
         });
         this.selected = this.selectedPosts.some((i)=> {
             if (i.checked == true)
@@ -281,20 +267,28 @@ class SimpleBlogApp {
     }
 
     savePost(title: HTMLInputElement) {
-        var data = CKEDITOR.editor.getData();
-        if ((data.length > 0) && !(title.value == null)) {
-            this.valueRequire = false;
-            this.newPostPressed = false;
-            this.selectedIndex = -1;
-            // this.selectedTitle = '';
-            console.log(`${title.value}`);
-
-            this.posts.push(new SimpleBlogPost(title.value, data));
-            this.posts.forEach((i)=> {
-                console.log(`ID ${i.id} Title ${i.title}, Content ${i.content}, ${i.creationTime}`)
-            });
+        if (!this.isEditPost) {
+            var data = CKEDITOR.editor.getData();
+            if ((data.length > 0) && !(title.value == null)) {
+                this.valueRequire = false;
+                this.newPostPressed = false;
+                this.selectedIndex = -1;
+                this.isNewPost = false;
+                this.posts.push(new SimpleBlogPost(title.value, data));
+            } else {
+                this.valueRequire = true;
+            }
         } else {
-            this.valueRequire = true;
+            var data = CKEDITOR.editor.getData();
+            if ((data.length > 0) && !(title.value == null)) {
+                this.posts[this.selectedIndex].title = title.value;
+                this.posts[this.selectedIndex].content = data;
+                this.valueRequire = false;
+                this.newPostPressed = false;
+                this.selectedIndex = -1;
+                this.selectedTitle = '';
+                this.isEditPost = false;
+            } else  this.valueRequire = true;
         }
         return false;
     }
@@ -302,6 +296,14 @@ class SimpleBlogApp {
     backToList() {
         this.valueRequire = false;
         this.newPostPressed = false;
+        if (this.isEditPost) {
+            this.valueRequire = false;
+            this.newPostPressed = false;
+            this.selectedIndex = -1;
+            this.selectedTitle = '';
+            this.isEditPost = false;
+            this.isNewPost = false;
+        }
     }
 
 }

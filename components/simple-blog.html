@@ -35,7 +35,6 @@
             <form #editForm="ngForm" class="ui form">
                 <div ngControlGroup="name" #name="ngForm">
                     <label><h3>Title*</h3></label><input ngControl="title" [(ngModel)]="selectedTitle" type="text"  #title="ngForm">
-
                 </div>
             </form>
             <h3>Description*</h3>
@@ -44,9 +43,6 @@
                 <p></p>
             </div>
             <CKEDITOR (editorReady)="editPostPress($event)"></CKEDITOR>
-            {{editForm.value | json }} {{title.value}} //TODO
-
-
         </div>
     </div>
 
