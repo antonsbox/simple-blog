@@ -70,11 +70,14 @@ class SimpleBlogPost {
     content: string;
     creationTime: string;
 
-    constructor(title: string, content: string) {
+    constructor(title: string, content: string, id?: number, creationTime?: string) {
+        if (id)this.id = id;
+        else this.id = this.getRandomInt(1, 10000);
         this.title = title;
         this.content = content;
-        this.id = this.getRandomInt(1, 10000); //TODO need getLastId from array
-        this.creationTime = this.formatDate(new Date());
+        if (creationTime)this.creationTime = creationTime;
+        else this.creationTime = this.formatDate(new Date());
+
     }
 
     getRandomInt(min: number, max: number) {
@@ -135,10 +138,9 @@ class SimpleBlogApp {
     tmpTite: string = '';
     isEditPost: boolean = false;
     isNewPost: boolean = false;
-    data: string;
+    data: any;
     http: Http;
-    // parseData: string = `{"id":"1","name":"News 1tt","content":"News 1 Content","created":"2013-10-16 17:45:00"}`;
-    outParsed: string;
+    outParsed: string[];
 
     constructor(http: Http) {
         this.http = http;
@@ -151,19 +153,20 @@ class SimpleBlogApp {
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
         this.http.request('http://magento1.tst/api/rest/simpleblog/read').subscribe((res: Response) => {
+
             this.data = res.json();
-            this.outParsed = JSON.parse(this.data);
-            // this.outParsed.
-        // console.log(Object.keys(this.data));
+            this.outParsed = this.data.split('')
+
+            JSON.parse(this.data).forEach(items=> {
+                console.log(`${items[0].id} ${items[0].name} ${items[0].content} ${items[0].created}`);
+                this.posts.push(new SimpleBlogPost(items[0].name, items[0].content, items[0].id, items[0].created));
+            });
         });
+
     }
 
     ngOnInit() {
         var i: number;
-        // for (i = 0; i <= 3; i++) {
-        //     this.posts.push(new SimpleBlogPost('test' + i.toString(), 'test data' + i.toString()));
-        // }
-        // this.outParsed = JSON.parse(this.parseData);
         this.makeRequest();
     }
 
