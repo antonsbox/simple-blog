@@ -141,13 +141,16 @@ class SimpleBlogApp {
     data: any;
     http: Http;
     outParsed: string[];
+    createData: string = '{';
+    response: any;
+    delimeter: string = '';
 
     constructor(http: Http) {
         this.http = http;
         this.posts = [];
     }
 
-    makeRequest(): void {
+    readRequest(): void {
         let headers: Headers = new Headers();
         headers.append('accept', 'application/json');
         let opts: RequestOptions = new RequestOptions();
@@ -155,19 +158,54 @@ class SimpleBlogApp {
         this.http.request('http://magento1.tst/api/rest/simpleblog/read').subscribe((res: Response) => {
 
             this.data = res.json();
-            this.outParsed = this.data.split('')
-
+            this.outParsed = this.data.split('');
             JSON.parse(this.data).forEach(items=> {
-                console.log(`${items[0].id} ${items[0].name} ${items[0].content} ${items[0].created}`);
-                this.posts.push(new SimpleBlogPost(items[0].name, items[0].content, items[0].id, items[0].created));
+                // console.log(`${items[0].post_id} ${items[0].title} ${items[0].content} ${items[0].created}`);
+                this.posts.push(new SimpleBlogPost(items[0].title, items[0].content, items[0].post_id, items[0].created));
             });
+            // this.posts.forEach(item=>{
+            //     console.log(`${item.id} ${item.title} ${item.content} ${item.creationTime}`);
+            // })
         });
 
     }
 
+    createRequest(): void {
+
+        if (this.posts.length > 1)this.delimeter = ',';
+        else this.delimeter = '';
+        this.posts.forEach(item=> {
+            // console.log(`${item.id} ${item.title} ${item.content} ${item.creationTime}`);
+            this.createData += '{post_id: \'' + item.id + '\', title: \'' + item.title + '\', content: \''
+                + item.content + '\', created: \'' + item.creationTime + '\'}' + this.delimeter;
+        });
+        this.createData += '}';
+        var tmpString: string;
+        if (this.posts.length > 1) {
+            tmpString = '[' + this.createData.slice(1, this.createData.length - 2) + ']';
+            this.createData = tmpString;
+        //.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        console.log(this.createData);
+        let headers: Headers = new Headers();
+        headers.append('accept', 'application/json');
+        headers.append('content-type', 'application/json');
+        let opts: RequestOptions = new RequestOptions();
+        opts.headers = headers;
+        // this.posts.forEach(item=> {
+        //     // console.log(`${item.id} ${item.title} ${item.content} ${item.creationTime}`);
+        //     this.createData += 'post_id: \'' + item.id + '\', title: \'' + item.title + '\', content: \'' + item.content + '\', created: \'' + item.creationTime + '\'';
+        // });
+        // this.createData += '}';
+        this.http.post('http://magento1.tst/api/rest/simpleblog/read', JSON.stringify(this.createData),opts).subscribe((res: Response) => {
+            this.response = res.json();
+            console.log(this.response);
+        });
+    }
+
+
     ngOnInit() {
-        var i: number;
-        this.makeRequest();
+        this.readRequest();
     }
 
     ngAfterViewInit() {
@@ -176,7 +214,8 @@ class SimpleBlogApp {
         }, 1);
     }
 
-    public  editPostPress(editorReady: boolean) {
+    public
+    editPostPress(editorReady: boolean) {
         if (editorReady == true) {
             if (this.posts.some((i)=> {
                     if (this.selectedId == i.id) {
@@ -299,6 +338,7 @@ class SimpleBlogApp {
                 this.selectedIndex = -1;
                 this.isNewPost = false;
                 this.posts.push(new SimpleBlogPost(title.value, data));
+                this.createRequest();
             } else {
                 this.valueRequire = true;
             }
