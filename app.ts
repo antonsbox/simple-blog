@@ -1,6 +1,7 @@
 import  {bootstrap} from "@angular/platform-browser-dynamic";
 import  {Component, Input, EventEmitter, Output, enableProdMode} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
+import {Http, Response, HTTP_PROVIDERS, Headers, RequestOptions} from '@angular/http';
 // enableProdMode();
 class Message {
     id: number;
@@ -134,16 +135,36 @@ class SimpleBlogApp {
     tmpTite: string = '';
     isEditPost: boolean = false;
     isNewPost: boolean = false;
+    data: string;
+    http: Http;
+    // parseData: string = `{"id":"1","name":"News 1tt","content":"News 1 Content","created":"2013-10-16 17:45:00"}`;
+    outParsed: string;
 
-    constructor() {
+    constructor(http: Http) {
+        this.http = http;
         this.posts = [];
+    }
+
+    makeRequest(): void {
+        let headers: Headers = new Headers();
+        headers.append('accept', 'application/json');
+        let opts: RequestOptions = new RequestOptions();
+        opts.headers = headers;
+        this.http.request('http://magento1.tst/api/rest/simpleblog/read').subscribe((res: Response) => {
+            this.data = res.json();
+            this.outParsed = JSON.parse(this.data);
+            // this.outParsed.
+        // console.log(Object.keys(this.data));
+        });
     }
 
     ngOnInit() {
         var i: number;
-        for (i = 0; i <= 3; i++) {
-            this.posts.push(new SimpleBlogPost('test' + i.toString(), 'test data' + i.toString()));
-        }
+        // for (i = 0; i <= 3; i++) {
+        //     this.posts.push(new SimpleBlogPost('test' + i.toString(), 'test data' + i.toString()));
+        // }
+        // this.outParsed = JSON.parse(this.parseData);
+        this.makeRequest();
     }
 
     ngAfterViewInit() {
@@ -308,4 +329,4 @@ class SimpleBlogApp {
 
 }
 
-bootstrap(SimpleBlogApp);
+bootstrap(SimpleBlogApp, [HTTP_PROVIDERS]);
