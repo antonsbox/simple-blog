@@ -4,12 +4,12 @@
     var map = {
         'app': 'app',
         'rxjs': 'node_modules/rxjs',
-        '@angular': 'node_modules/@angular'
+        '@angular': 'node_modules/@angular',
     };
 
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
-        'rxjs': {defaultExtension: 'js'}
+        'rxjs': {defaultExtension: 'js'},
     };
 
     var packageNames = [
