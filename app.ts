@@ -154,13 +154,12 @@ class SimpleBlogApp {
         headers.append('accept', 'application/json');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.get('http://magento1.tst/api/rest/simpleblog/read').subscribe((res: Response) => {
-
+        this.http.get('http://magento1.tst/api/rest/simpleblog/read',opts).subscribe((res: Response) => {
             this.data = res.json();
-            this.outParsed = this.data.split('');
+            // this.outParsed = this.data.split('');
             JSON.parse(this.data).forEach(items=> {
                 // console.log(`${items[0].post_id} ${items[0].title} ${items[0].content} ${items[0].created}`);
-                this.posts.push(new SimpleBlogPost(items[0].title, items[0].content, items[0].post_id, items[0].created));
+                this.posts.push(new SimpleBlogPost(decodeURI(items[0].title), decodeURI(items[0].content), items[0].post_id, decodeURI(items[0].created)));
             });
             // this.posts.forEach(item=>{
             //     console.log(`${item.post_id} ${item.title} ${item.content} ${item.created}`);
@@ -169,7 +168,7 @@ class SimpleBlogApp {
 
     }
 
-    createRequest(): void {
+    createRequest(data: SimpleBlogPost): void {
 
         // if (this.posts.length > 1)this.delimiter = ',';
         // else this.delimiter = '';
@@ -197,11 +196,11 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.post('http://magento1.tst/api/rest/simpleblog/read', JSON.stringify(this.posts), opts)
+        this.http.post('http://magento1.tst/api/rest/simpleblog/read', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
-        console.log(JSON.stringify(this.posts))
+        console.log(JSON.stringify(data))
     }
 
     ngOnInit() {
@@ -226,7 +225,7 @@ class SimpleBlogApp {
                 })) {
                 if (this.selectedIndex > -1) {
                     CKEDITOR.editor.setData(decodeURI(this.posts[this.selectedIndex].content));
-                    this.tmpTite = this.posts[this.selectedIndex].title;
+                    this.tmpTite = decodeURI(this.posts[this.selectedIndex].title);
                     setTimeout(() => {
                         this.selectedTitle = this.tmpTite;
                     }, 1);
@@ -336,8 +335,8 @@ class SimpleBlogApp {
                 this.newPostPressed = false;
                 this.selectedIndex = -1;
                 this.isNewPost = false;
-                this.posts.push(new SimpleBlogPost(encodeURI(title.value), encodeURI(data)));
-                this.createRequest();
+                this.posts.push(new SimpleBlogPost(title.value, data));
+                this.createRequest(this.posts[this.posts.length - 1]);
             } else {
                 this.valueRequire = true;
             }
