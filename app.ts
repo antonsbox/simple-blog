@@ -64,18 +64,18 @@ class CKEDITOR {
 
 }
 class SimpleBlogPost {
-    id: number;
+    post_id: number;
     title: string;
     content: string;
-    creationTime: string;
+    created: string;
 
     constructor(title: string, content: string, id?: number, creationTime?: string) {
-        if (id)this.id = id;
-        else this.id = this.getRandomInt(1, 10000);
+        if (id)this.post_id = id;
+        else this.post_id = this.getRandomInt(1, 10000);
         this.title = title;
         this.content = content;
-        if (creationTime)this.creationTime = creationTime;
-        else this.creationTime = this.formatDate(new Date());
+        if (creationTime)this.created = creationTime;
+        else this.created = this.formatDate(new Date());
 
     }
 
@@ -163,7 +163,7 @@ class SimpleBlogApp {
                 this.posts.push(new SimpleBlogPost(items[0].title, items[0].content, items[0].post_id, items[0].created));
             });
             // this.posts.forEach(item=>{
-            //     console.log(`${item.id} ${item.title} ${item.content} ${item.creationTime}`);
+            //     console.log(`${item.post_id} ${item.title} ${item.content} ${item.created}`);
             // })
         });
 
@@ -171,31 +171,37 @@ class SimpleBlogApp {
 
     createRequest(): void {
 
-        if (this.posts.length > 1)this.delimiter = ',';
-        else this.delimiter = '';
-        this.posts.forEach(item=> {
-            this.createData += '{\"id\":\"' + item.id + '\", \"title\":\"'
-                + item.title + '\", \"content\":\"' + item.content + '\", \"created\":\"' + item.creationTime + '\"}' + this.delimiter;
-        });
-        this.createData += '}';
-        var tmpString: string;
-        if (this.posts.length > 1) {
-            tmpString = '[' + this.createData.slice(1, this.createData.length - 2) + ']';
-            this.createData = tmpString;
-        } else {
-            tmpString = '[' + this.createData.slice(1, this.createData.length - 1) + ']';
-            this.createData = tmpString;
-        }
-        console.log(this.createData);
+        // if (this.posts.length > 1)this.delimiter = ',';
+        // else this.delimiter = '';
+        // this.posts.forEach(item=> {
+        //     this.createData += '{\"post_id\":\"' + item.post_id + '\", \"title\":\"'
+        //         + item.title + '\", \"content\":\"' + item.content + '\", \"created\":\"' + item.created + '\"}' + this.delimiter;
+        // });
+        // this.posts.forEach(item=> {
+        //     this.createData += '{\"post_id\":\"' + item.post_id + '\", \"title\":\"'
+        //         + item.title + '\", \"content\":\"' + item.content + '\", \"created\":\"' + item.created + '\"}' + this.delimiter;
+        // });
+        // this.createData += '}';
+        // var tmpString: string;
+        // if (this.posts.length > 1) {
+        //     tmpString = '[' + this.createData.slice(1, this.createData.length - 2) + ']';
+        //     this.createData = tmpString;
+        // } else {
+        //     tmpString = '[' + this.createData.slice(1, this.createData.length - 1) + ']';
+        //     this.createData = tmpString;
+        // }
+        // console.log(this.createData);
+        // console.log(this.createData);
         let headers: Headers = new Headers();
         headers.append('accept', 'application/json');
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.post('http://magento1.tst/api/rest/simpleblog/read', JSON.stringify(this.createData), opts)
+        this.http.post('http://magento1.tst/api/rest/simpleblog/read', JSON.stringify(this.posts), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
+        console.log(JSON.stringify(this.posts))
     }
 
     ngOnInit() {
@@ -211,7 +217,7 @@ class SimpleBlogApp {
     public editPostPress(editorReady: boolean) {
         if (editorReady == true) {
             if (this.posts.some((i)=> {
-                    if (this.selectedId == i.id) {
+                    if (this.selectedId == i.post_id) {
                         this.selectedIndex = this.posts.indexOf(i);
                         return true;
                     } else {
@@ -253,7 +259,7 @@ class SimpleBlogApp {
             this.selectedPosts.forEach((sp)=> {
                 if (sp.checked == true) {
                     this.posts.forEach((p)=> {
-                        if (sp.id == p.id) {
+                        if (sp.id == p.post_id) {
                             index = this.posts.indexOf(p);
                             this.posts.splice(index, index);
                             if (index == 0) this.posts.splice(index, 1);

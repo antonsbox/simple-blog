@@ -1,13 +1,13 @@
 <td>
     <div class="ui checkbox">
-        <input  #checkblog type="checkbox" value="{{row.id}}"
+        <input  #checkblog type="checkbox" value="{{row.post_id}}"
                 (change)="selectPost(checkblog.value,checkblog.checked)">
         <label></label>
     </div>
 </td>
 <td>{{row.title}}</td>
-<td>{{row.creationTime}}</td>
-<td><button #edit (click)="editPost(edit.value)" value="{{row.id}}" class="ui basic button">
+<td>{{row.created}}</td>
+<td><button #edit (click)="editPost(edit.value)" value="{{row.post_id}}" class="ui basic button">
         <i class="icon edit"></i>Edit</button>
 </td>
           
