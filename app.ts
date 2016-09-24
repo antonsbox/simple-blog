@@ -2,6 +2,7 @@ import  {bootstrap} from "@angular/platform-browser-dynamic";
 import  {Component, Input, EventEmitter, Output, enableProdMode} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 import {Http, Response, HTTP_PROVIDERS, Headers, RequestOptions} from '@angular/http';
+enableProdMode();
 class Message {
     id: number;
     checked: boolean;
