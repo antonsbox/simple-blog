@@ -14,7 +14,7 @@ class Message {
 }
 @Component({
     selector: '[blog-tr]',
-    template:`<td>
+    template: `<td>
     <div class="ui checkbox">
         <input  #checkblog type="checkbox" value="{{row.post_id}}"
                 (change)="selectPost(checkblog.value,checkblog.checked)">
@@ -136,7 +136,7 @@ class SimpleBlogPost {
 @Component({
     selector: 'simple-blog',
     directives: [FORM_DIRECTIVES, CKEDITOR, PostRow],
-    template:`<div class="ui container segment">
+    template: `<div class="ui container segment">
     <div *ngIf="!newPostPressed">
         <div class="ui container">
             <div class=" ui clearing segment">
@@ -210,12 +210,13 @@ class SimpleBlogApp {
         this.posts = [];
     }
 
+
     readRequest(): void {
         let headers: Headers = new Headers();
         headers.append('accept', 'application/json');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.get('http://magento1.tst/api/rest/simpleblog/posts/multi', opts).subscribe((res: Response) => {
+        this.http.get('http://testmagento.tst/api/rest/simpleblog/posts/multi', opts).subscribe((res: Response) => {
             this.data = res.json();
             // this.outParsed = this.data.split('');
             JSON.parse(this.data).forEach(items=> {
@@ -231,7 +232,7 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.post('http://magento1.tst/api/rest/simpleblog/posts/multi', decodeURI(JSON.stringify(data)), opts)
+        this.http.post('http://testmagento.tst/api/rest/simpleblog/posts/multi', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
@@ -243,14 +244,22 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.put('http://magento1.tst/api/rest/simpleblog/read', decodeURI(JSON.stringify(data)), opts)
+        this.http.put('http://testmagento.tst/api/rest/simpleblog/read', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
-        // console.log(JSON.stringify(data))
     }
 
-    deleteRequest() {
+    deleteRequest(id: number) {
+        let headers: Headers = new Headers();
+        headers.append('accept', 'application/json');
+        headers.append('Content-Type', 'application/json; charset=utf-8');
+        let opts: RequestOptions = new RequestOptions();
+        opts.headers = headers;
+        this.http.delete('http://testmagento.tst/api/rest/simpleblog/'+id.toString(), opts)
+            .subscribe(res => {
+                // this.response = res.json();
+            });
 
     }
 
@@ -311,6 +320,7 @@ class SimpleBlogApp {
                     this.posts.forEach((p)=> {
                         if (sp.id == p.post_id) {
                             index = this.posts.indexOf(p);
+                            this.deleteRequest(p.post_id);
                             this.posts.splice(index, index);
                             if (index == 0) this.posts.splice(index, 1);
                         }
@@ -318,9 +328,10 @@ class SimpleBlogApp {
                 }
             });
             this.selectedPosts.splice(0, this.selectedPosts.length);
-            this.posts.forEach(function (p) {
-            });
+            // this.posts.forEach(function (p) {
+            // });
         } else {
+            this.deleteRequest(this.posts[this.selectedIndex].post_id);
             this.posts.splice(this.selectedIndex, 1);
             this.valueRequire = false;
             this.newPostPressed = false;
@@ -396,6 +407,7 @@ class SimpleBlogApp {
             if ((data.length > 0) && !(title.value == null)) {
                 this.posts[this.selectedIndex].title = title.value;
                 this.posts[this.selectedIndex].content = data;
+                this.updateRequest(this.posts[this.selectedIndex]);
                 this.valueRequire = false;
                 this.newPostPressed = false;
                 this.selectedIndex = -1;
