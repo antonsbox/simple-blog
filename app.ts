@@ -216,7 +216,7 @@ class SimpleBlogApp {
         headers.append('accept', 'application/json');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.get('http://testmagento.tst/api/rest/simpleblog/posts/multi', opts).subscribe((res: Response) => {
+        this.http.get(location.origin+'/api/rest/simpleblog/posts/multi', opts).subscribe((res: Response) => {
             this.data = res.json();
             // this.outParsed = this.data.split('');
             JSON.parse(this.data).forEach(items=> {
@@ -232,7 +232,7 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.post('http://testmagento.tst/api/rest/simpleblog/posts/multi', decodeURI(JSON.stringify(data)), opts)
+        this.http.post(location.origin+'/api/rest/simpleblog/posts/multi', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
@@ -244,7 +244,7 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.put('http://testmagento.tst/api/rest/simpleblog/read', decodeURI(JSON.stringify(data)), opts)
+        this.http.put(location.origin+'/api/rest/simpleblog/read', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
@@ -256,7 +256,7 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.delete('http://testmagento.tst/api/rest/simpleblog/'+id.toString(), opts)
+        this.http.delete(location.origin+'/api/rest/simpleblog/'+id.toString(), opts)
             .subscribe(res => {
                 // this.response = res.json();
             });
@@ -399,6 +399,9 @@ class SimpleBlogApp {
                 this.isNewPost = false;
                 this.posts.push(new SimpleBlogPost(title.value, data));
                 this.createRequest(this.posts[this.posts.length - 1]);
+                this.posts.splice(0, this.posts.length);
+                this.readRequest();
+
             } else {
                 this.valueRequire = true;
             }
