@@ -399,8 +399,8 @@ class SimpleBlogApp {
                 this.isNewPost = false;
                 this.posts.push(new SimpleBlogPost(title.value, data));
                 this.createRequest(this.posts[this.posts.length - 1]);
-                this.posts.splice(0, this.posts.length);
-                this.readRequest();
+                // this.posts.splice(0, this.posts.length);
+                // this.readRequest();
 
             } else {
                 this.valueRequire = true;
