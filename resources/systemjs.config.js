@@ -5,11 +5,13 @@
         'app': 'app',
         'rxjs': 'node_modules/rxjs',
         '@angular': 'node_modules/@angular',
+        'ng2-popup':'node_modules/ng2-popup/dist'
     };
 
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
         'rxjs': {defaultExtension: 'js'},
+        'ng2-popup':{ main: 'ng2-popup.umd.js', defaultExtension: 'js' }
     };
 
     var packageNames = [

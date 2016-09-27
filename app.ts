@@ -1,5 +1,5 @@
 import  {bootstrap} from "@angular/platform-browser-dynamic";
-import  {Component, Input, EventEmitter, Output, enableProdMode} from"@angular/core";
+import  {Component, Input, EventEmitter, Output, enableProdMode, ViewChild} from"@angular/core";
 import  {FORM_DIRECTIVES} from  "@angular/common";
 import {Http, Response, HTTP_PROVIDERS, Headers, RequestOptions} from '@angular/http';
 enableProdMode();
@@ -132,7 +132,6 @@ class SimpleBlogPost {
 
 }
 
-
 @Component({
     selector: 'simple-blog',
     directives: [FORM_DIRECTIVES, CKEDITOR, PostRow],
@@ -159,6 +158,15 @@ class SimpleBlogPost {
             </thead>
             <tr (select)="onSelect($event)" (edit)="editPost($event)" *ngFor="let post of posts" [blog-tr]="post"></tr>
         </table>
+         <div *ngIf="isError">
+         <h1>An error has occurred.</h1>
+         <p>{{errorText}}</p>
+         <h3>If you see an 403 error, please do:</h3>
+         Go to magento configuration interface. Go to menu node System->Web Services->
+         REST->Roles-Role API Resources->Guest and mark everything in Simple Blog REST.
+         Then go to node System->Web Services->REST->REST Attributes->Guest 
+         and also mark everything in Simple Blog REST. And, after reload this page.        
+         </div>
     </div>
     <div *ngIf="newPostPressed">
         <div class="ui container">
@@ -204,6 +212,8 @@ class SimpleBlogApp {
     createData: string = '{';
     response: any;
     delimiter: string = '';
+    isError: boolean = false;
+    errorText: string = '';
 
     constructor(http: Http) {
         this.http = http;
@@ -216,12 +226,19 @@ class SimpleBlogApp {
         headers.append('accept', 'application/json');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
+
         this.http.get(location.origin+'/api/rest/simpleblog/posts/multi', opts).subscribe((res: Response) => {
             this.data = res.json();
+            //console.log(this.data);
             // this.outParsed = this.data.split('');
+            this.posts.splice(0, this.posts.length);
             JSON.parse(this.data).forEach(items=> {
                 this.posts.push(new SimpleBlogPost(decodeURI(items[0].title), decodeURI(items[0].content), items[0].post_id, decodeURI(items[0].created)));
             });
+        }, (err: any)=> {
+            this.errorText = err.toString();
+            this.isError = true;
+
         });
 
     }
@@ -234,8 +251,16 @@ class SimpleBlogApp {
         opts.headers = headers;
         this.http.post(location.origin+'/api/rest/simpleblog/posts/multi', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
-                // this.response = res.json();
-            });
+                    // this.response = res.json();
+                    this.posts.push(data);
+                    this.readRequest();
+                },
+                (err: any)=> {
+                    this.errorText = err.toString();
+                    this.isError = true;
+
+                }
+            );
     }
 
     updateRequest(data: SimpleBlogPost) {
@@ -246,8 +271,14 @@ class SimpleBlogApp {
         opts.headers = headers;
         this.http.put(location.origin+'/api/rest/simpleblog/read', decodeURI(JSON.stringify(data)), opts)
             .subscribe(res => {
-                // this.response = res.json();
-            });
+                    // this.response = res.json();
+                },
+                (err: any)=> {
+                    this.errorText = err.toString();
+                    this.isError = true;
+
+                }
+            );
     }
 
     deleteRequest(id: number) {
@@ -256,10 +287,17 @@ class SimpleBlogApp {
         headers.append('Content-Type', 'application/json; charset=utf-8');
         let opts: RequestOptions = new RequestOptions();
         opts.headers = headers;
-        this.http.delete(location.origin+'/api/rest/simpleblog/'+id.toString(), opts)
+        this.http.delete(location.origin+'/api/rest/simpleblog/' + id.toString(), opts)
             .subscribe(res => {
-                // this.response = res.json();
-            });
+                    // this.response = res.json();
+                    this.readRequest();
+                },
+                (err: any)=> {
+                    this.errorText = err.toString();
+                    this.isError = true;
+
+                }
+            );
 
     }
 
@@ -315,14 +353,17 @@ class SimpleBlogApp {
                 this.backToList();
             }
             var index: number;
+
             this.selectedPosts.forEach((sp)=> {
+                // console.log(sp);
                 if (sp.checked == true) {
                     this.posts.forEach((p)=> {
                         if (sp.id == p.post_id) {
                             index = this.posts.indexOf(p);
-                            this.deleteRequest(p.post_id);
                             this.posts.splice(index, index);
                             if (index == 0) this.posts.splice(index, 1);
+                            // console.log('todelete ' + p.post_id);
+                            this.deleteRequest(p.post_id);
                         }
                     });
                 }
@@ -397,10 +438,10 @@ class SimpleBlogApp {
                 this.newPostPressed = false;
                 this.selectedIndex = -1;
                 this.isNewPost = false;
-                this.posts.push(new SimpleBlogPost(title.value, data));
-                this.createRequest(this.posts[this.posts.length - 1]);
+                var post: SimpleBlogPost = new SimpleBlogPost(title.value, data);
+                // this.posts.push(new SimpleBlogPost(title.value, data));
+                this.createRequest(post);
                 // this.posts.splice(0, this.posts.length);
-                // this.readRequest();
 
             } else {
                 this.valueRequire = true;
